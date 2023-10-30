@@ -1,0 +1,28 @@
+html {
+  min-height: 10em;
+  min-width: 30em;
+}
+
+body {
+  background-color: rgb(19, 12, 12);
+}
+p {
+  /* font-family: "Impact"; */
+  color: rgb(146, 123, 123);
+  font-size: 15px;
+}
+
+h1 {
+  color: wheat;
+}
+
+* {
+  margin: 10;
+  padding: 10;
+}
+
+button {
+  background-color: wheat;
+  border: none;
+  border-radius: 5px;
+}

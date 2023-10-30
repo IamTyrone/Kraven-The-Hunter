@@ -1,0 +1,29 @@
+{
+  "name": "Kraven The Hunter",
+  "version": "1.0.0",
+  "description": "An open source cyber security tool that parses URLs from a browser extension and uses a machine learning algorithm to assess the likelihood of the URL being malicious.",
+  "manifest_version": 3,
+  "author": "Kraven",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Kraven The Hunter"
+  },
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "storage",
+    "accessibilityFeatures.modify",
+    "scripting",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["background.css"],
+      "js": ["navigate.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  }
+}
