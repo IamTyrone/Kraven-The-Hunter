@@ -1,10 +1,17 @@
-import { Button, Card, TextInput, Avatar } from "flowbite-react";
+import { Button, Card, TextInput, Avatar, Spinner } from "flowbite-react";
+import { useState } from "react";
 
 export default function ReportingForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const onChange = (e) => {};
+
+  const onSubmit = () => {
+    setIsLoading(true);
+  };
   return (
-    <center style={{ marginTop: "250px" }}>
+    <center style={{ marginTop: "200px" }}>
       <Card className="max-w-xl">
-        <Avatar img="/kravenLogo.avif" rounded size="xl" />
+        <Avatar img="/Lion2.jpg" rounded size="xl" />
         <h1 className="text-center text-xl mb-4 mt-3">KRAVEN THE HUNTER</h1>
         <span className="text-center text-sm mb-4">
           <b>
@@ -18,12 +25,32 @@ export default function ReportingForm() {
         </span>
         <form className="flex flex-col gap-4">
           <div>
-            <TextInput id="email" placeholder="Email" required type="email" />
+            <TextInput
+              id="email"
+              placeholder="Email"
+              required
+              type="email"
+              onChange={onChange}
+              name="email"
+            />
           </div>
           <div>
-            <TextInput id="url" placeholder="URL" required type="text" />
+            <TextInput
+              id="url"
+              placeholder="URL"
+              required
+              type="text"
+              onChange={onChange}
+              name="url"
+            />
           </div>
-          <Button type="submit">Submit</Button>
+          <Button color="warning" onClick={onSubmit}>
+            {isLoading ? (
+              <Spinner color="warning" aria-label="Warning spinner example" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </form>
       </Card>
     </center>
