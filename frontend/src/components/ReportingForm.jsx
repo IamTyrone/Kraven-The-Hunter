@@ -1,15 +1,26 @@
-import { Button, Card, TextInput, Avatar, Spinner } from "flowbite-react";
+import {
+  Button,
+  Card,
+  TextInput,
+  Avatar,
+  Spinner,
+  Select,
+} from "flowbite-react";
 import { useState } from "react";
 
 export default function ReportingForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const onChange = (e) => {};
+  const [payload, setPayload] = useState();
+  const onChange = (e) => {
+    setPayload({ ...payload, [e.target.name]: e.target.value });
+  };
 
   const onSubmit = () => {
     setIsLoading(true);
+    console.log(payload);
   };
   return (
-    <center style={{ marginTop: "200px" }}>
+    <center style={{ marginTop: "150px" }}>
       <Card className="max-w-xl">
         <Avatar img="/Lion2.jpg" rounded size="xl" />
         <h1 className="text-center text-xl mb-4 mt-3">KRAVEN THE HUNTER</h1>
@@ -43,6 +54,18 @@ export default function ReportingForm() {
               onChange={onChange}
               name="url"
             />
+          </div>
+          <div className="max-w-xl">
+            <Select
+              id="threat_category"
+              required
+              onChange={onChange}
+              name="threat_category"
+            >
+              <option>-- Select Threat Category --</option>
+              <option>Phishing</option>
+              <option>Typo Squating</option>
+            </Select>
           </div>
           <Button color="warning" onClick={onSubmit}>
             {isLoading ? (
