@@ -7,6 +7,7 @@ import {
   Select,
 } from "flowbite-react";
 import { useState } from "react";
+import { HiOutlineArrowRight } from "react-icons/hi";
 
 export default function ReportingForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function ReportingForm() {
     console.log(payload);
   };
   return (
-    <center style={{ marginTop: "150px" }}>
+    <center style={{ marginTop: "100px" }}>
       <Card className="max-w-xl">
         <Avatar img="/Lion2.jpg" rounded size="xl" />
         <h1 className="text-center text-xl mb-4 mt-3">KRAVEN THE HUNTER</h1>
@@ -67,12 +68,16 @@ export default function ReportingForm() {
               <option>Typo Squating</option>
             </Select>
           </div>
-          <Button color="warning" onClick={onSubmit}>
+          <Button color="failure" onClick={onSubmit}>
             {isLoading ? (
-              <Spinner color="warning" aria-label="Warning spinner example" />
+              <Spinner color="failure" aria-label="Warning spinner example" />
             ) : (
               "Submit"
             )}
+          </Button>
+          <Button color="warning">
+            Scan A URL
+            <HiOutlineArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </form>
       </Card>

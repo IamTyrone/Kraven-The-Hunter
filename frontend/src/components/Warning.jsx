@@ -1,8 +1,9 @@
-import { Card, Avatar, Banner, Badge } from "flowbite-react";
+import { Card, Avatar, Banner, Badge, Button } from "flowbite-react";
+import { HiOutlineArrowRight } from "react-icons/hi";
 
 export default function Warning() {
   return (
-    <center style={{ marginTop: "150px" }}>
+    <center style={{ marginTop: "100px" }}>
       <Card className="max-w-xl">
         <Avatar img="/Lion2.jpg" rounded size="xl" />
         <h1 className="text-center text-xl mb-4 mt-3">KRAVEN THE HUNTER</h1>
@@ -68,6 +69,14 @@ export default function Warning() {
             </div>
           </div>
         </Banner>
+        <Button color="warning">
+          Scan A URL
+          <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+        </Button>
+        <Button color="failure">
+          Report A URL
+          <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+        </Button>
       </Card>
     </center>
   );
