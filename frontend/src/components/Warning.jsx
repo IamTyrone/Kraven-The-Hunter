@@ -1,7 +1,9 @@
 import { Card, Avatar, Banner, Badge, Button } from "flowbite-react";
 import { HiOutlineArrowRight } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 export default function Warning() {
+  const navigate = useNavigate();
   return (
     <center style={{ marginTop: "100px" }}>
       <Card className="max-w-xl">
@@ -69,11 +71,11 @@ export default function Warning() {
             </div>
           </div>
         </Banner>
-        <Button color="warning">
+        <Button color="warning" onClick={() => navigate("/scan")}>
           Scan A URL
           <HiOutlineArrowRight className="ml-2 h-5 w-5" />
         </Button>
-        <Button color="failure">
+        <Button color="failure" onClick={() => navigate("/")}>
           Report A URL
           <HiOutlineArrowRight className="ml-2 h-5 w-5" />
         </Button>

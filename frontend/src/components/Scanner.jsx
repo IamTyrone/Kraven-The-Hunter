@@ -1,9 +1,12 @@
 import { Card, Avatar, Button, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 export default function Scanner() {
   const [payload, setPayload] = useState();
+  const navigate = useNavigate();
+
   const onChange = (e) => {
     setPayload({ ...payload, [e.target.name]: e.target.value });
   };
@@ -31,7 +34,7 @@ export default function Scanner() {
             />
           </div>
         </form>
-        <Button color="warning">
+        <Button color="warning" onClick={() => navigate("/scan")}>
           Scan A URL
           <HiOutlineArrowRight className="ml-2 h-5 w-5" />
         </Button>
