@@ -1,5 +1,5 @@
 import pandas as pd
-import re, logging
+import re, logging, json
 
 
 class Cleaner:
@@ -12,13 +12,13 @@ class Cleaner:
         counter = 0
 
         for value in iter(string):
-            if value in digits is True:
+            if value in digits:
                 counter += 1
 
         return counter
     
     def special_character_count(self, string: str) -> int:
-        special_chars = ['@','?','-','=','.','#','%','+','$','!','*',',','//']
+        special_chars = ['@','?','-','=','#','%','+','$','!','*',',','//', '.']
         count = 0
 
         for char in iter(string):
@@ -28,22 +28,23 @@ class Cleaner:
         return count
     
     def shortining_service(self, url):
-        match = re.search('bit\.ly|goo\.gl|shorte\.st|go2l\.ink|x\.co|ow\.ly|t\.co|tinyurl|tr\.im|is\.gd|cli\.gs|'
-                        'yfrog\.com|migre\.me|ff\.im|tiny\.cc|url4\.eu|twit\.ac|su\.pr|twurl\.nl|snipurl\.com|'
-                        'short\.to|BudURL\.com|ping\.fm|post\.ly|Just\.as|bkite\.com|snipr\.com|fic\.kr|loopt\.us|'
-                        'doiop\.com|short\.ie|kl\.am|wp\.me|rubyurl\.com|om\.ly|to\.ly|bit\.do|t\.co|lnkd\.in|'
-                        'db\.tt|qr\.ae|adf\.ly|goo\.gl|bitly\.com|cur\.lv|tinyurl\.com|ow\.ly|bit\.ly|ity\.im|'
-                        'q\.gs|is\.gd|po\.st|bc\.vc|twitthis\.com|u\.to|j\.mp|buzurl\.com|cutt\.us|u\.bb|yourls\.org|'
-                        'x\.co|prettylinkpro\.com|scrnch\.me|filoops\.info|vzturl\.com|qr\.net|1url\.com|tweez\.me|v\.gd|'
-                        'tr\.im|link\.zip\.net',
-                        url)
-        if match:
-            return 1
-        else:
-            return 0
+        shorteners_list = ['bit.ly','goo.gl','shorte.st','go2l.ink','x.co','ow.ly','t.co','tinyurl','tr.im','is.gd','cli.gs',
+                        'yfrog.com','migre.me','ff.im','tiny.cc','url4.eu','twit.ac','su.pr','twurl.nl','snipurl.com',
+                        'short.to','BudURL.com','ping.fm','post.ly','Just.as','bkite.com','snipr.com','fic.kr','loopt.us',
+                        'doiop.com','short.ie','kl.am','wp.me','rubyurl.com','om.ly','to.ly','bit.do','t.co','lnkd.in',
+                        'db.tt','qr.ae','adf.ly','goo.gl','bitly.com','cur.lv','tinyurl.com','ow.ly','bit.ly','ity.im',
+                        'q.gs','is.gd','po.st','bc.vc','twitthis.com','u.to','j.mp','buzurl.com','cutt.us','u.bb','yourls.org',
+                        'x.co','prettylinkpro.com','scrnch.me','filoops.info','vzturl.com','qr.net','1url.com','tweez.me','v.gd',
+                        'tr.im','link.zip.net']
+        for value in shorteners_list:
+            if value in url:
+                return 1
+            else:
+                return 0
 
 
     def add_features(self):
+
         df = pd.read_csv(self.data_path)
         url_length = []
         verdict = []
@@ -52,10 +53,12 @@ class Cleaner:
         special_character_count = []
         special_character_percantge = []
         has_shortining_service = []
+        good_or_bad = []
+        url = []
         
 
         for index, row in df.iterrows():
-            print(index)
+            url.append(row["url"])
             url_length.append(len(row["url"]))
             verdict_value = 1 if row["label"] == "bad" else 0
             verdict.append(verdict_value)
@@ -64,6 +67,7 @@ class Cleaner:
             special_character_count.append(self.special_character_count(row["url"]))
             special_character_percantge.append(self.special_character_count(row["url"])/len(row["url"]))
             has_shortining_service.append(self.shortining_service(row["url"]))
+            good_or_bad.append(row["label"])
 
         df["url_length"] = url_length
         df["digit_quantity"] = digit_quantity
@@ -72,12 +76,7 @@ class Cleaner:
         df["special_character_percantge"] = special_character_percantge
         df["has_shortining_service"] = has_shortining_service
         df["verdict"] = verdict
+        df["label"] = good_or_bad
+        df["url"] = url
 
-        logging.warning("Note that the CSVs might not appear visually as they do programmatically.")
-
-        df.to_csv("features/prepped/Malware.csv", index=False)
-                 
-
-
-cleaner = Cleaner(data_path="features/data/Malware.csv")
-cleaner.add_features()
+        return df
