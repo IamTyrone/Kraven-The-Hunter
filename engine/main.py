@@ -12,8 +12,15 @@ class URL(BaseModel):
 
 model = joblib.load("models/decision_tree_classifier.pkl")
 
+def validate_url(url: str) -> bool:
+    return True
+
 @app.post("/prediction")
 async def root(url: URL):
+    url_is_valid = validate_url(url.url)
+
+    if url_is_valid is False: return {"error": "Invalid URL."}
+    
     df = pd.DataFrame()
     cleaner = Cleaner("")
     df["url_length"] = [len(url.url)]
@@ -24,7 +31,7 @@ async def root(url: URL):
     df["has_shortining_service"] = [cleaner.shortining_service(url.url)]
 
     prediction = model.predict(df)
-    
+
     data = {"status": False, "message":"Benign"}
     if prediction[0] == 0:
         return data
