@@ -1,56 +1,32 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import  classification_report
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, ExtraTreesClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import SGDClassifier, LogisticRegression
-from sklearn.naive_bayes import GaussianNB
-import logging
 from features.features import Cleaner
 
+app = FastAPI()
 
-#spliting the dataset
-cleaner = Cleaner(data_path="features/data/Malware.csv")
 
-df = cleaner.add_features()
+class URL(BaseModel):
+    url: str
 
-print("----------------------> Starting ML Learning process <--------------------\n")
+model = joblib.load("models/decision_tree_classifier.pkl")
 
-x = df.drop(['url','label','verdict'], axis=1)
-y = df['verdict']
+@app.post("/prediction")
+async def root(url: URL):
+    df = pd.DataFrame()
+    cleaner = Cleaner("")
+    df["url_length"] = [len(url.url)]
+    df["digit_quantity"] = [cleaner.digit_quantity(url.url)]
+    df["numerical_percantage"] = [cleaner.digit_quantity(url.url)/len(url.url)]
+    df["special_character_count"] = [cleaner.special_character_count(url.url)]
+    df["special_character_percantge"] = [cleaner.special_character_count(url.url)/len(url.url)]
+    df["has_shortining_service"] = [cleaner.shortining_service(url.url)]
 
-#train = 80% test = 20%
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=2)
-
-#training models
-models = [LogisticRegression, DecisionTreeClassifier,RandomForestClassifier,AdaBoostClassifier,KNeighborsClassifier,SGDClassifier,
-         ExtraTreesClassifier,GaussianNB]
-# Initialize a list to store the classification reports
-classification_reports = []
-
-for model_class in models:
-    print(f"----------------------------> {model_class} <----------------------------")
+    prediction = model.predict(df)
     
-    # Create an instance of the model
-    model = model_class()
+    data = {"status": False, "message":"Benign"}
+    if prediction[0] == 0:
+        return data
     
-    # Train the model
-    model.fit(x_train, y_train)
-    
-    # Make predictions
-    y_pred = model.predict(x_test)
-    
-    # Calculate and store the classification report
-    report = classification_report(y_test, y_pred, target_names=['benign', 'malicious'])
-    classification_reports.append(report)
-    
-    # Print the classification report
-    print('\033[01m Classification Report \033[0m')
-    print(report)
-
-#final report
-output = pd.DataFrame({"Model": ['Logistic Regression Classifier','Decision Tree Classifier', 'Random Forest Classifier', 'AdaBoost Classifier', 'KNeighbors Classifier', 'SGD Classifier', 'Extra Trees Classifier', 'Gaussian NB'], "Classification Report": classification_reports})
-
-print(output)
-
+    return {"status": True, "message":"Malicious"}
