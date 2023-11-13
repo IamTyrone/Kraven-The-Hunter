@@ -20,7 +20,7 @@ async def root(url: URL):
     url_is_valid = validate_url(url.url)
 
     if url_is_valid is False: return {"error": "Invalid URL."}
-    
+
     df = pd.DataFrame()
     cleaner = Cleaner("")
     df["url_length"] = [len(url.url)]
