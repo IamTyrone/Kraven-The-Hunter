@@ -57,3 +57,4 @@ def train():
 
     print(output)
 
+train()
