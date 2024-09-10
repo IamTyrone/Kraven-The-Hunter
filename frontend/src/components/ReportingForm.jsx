@@ -91,6 +91,8 @@ export default function ReportingForm() {
               <option>-- Select Threat Category --</option>
               <option>Phishing</option>
               <option>Typo Squating</option>
+              <option>Shopping</option>
+              <option>Adult</option>
             </Select>
           </div>
           <Button color="failure" onClick={onSubmit}>

@@ -1,9 +1,33 @@
 import { Card, Avatar, Banner, Badge, Button } from "flowbite-react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Warning() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const category = searchParams.get("category");
+
+  const maliciousCategories = [
+    "adult",
+    "malware",
+    "phishing",
+    "Malicious",
+    "Benign",
+  ];
+
+  const controlledThreatCategories = [
+    "Phishing",
+    "Typo Squating",
+    "Adult",
+    "shopping",
+  ];
+
+  const inControlledThreatCategories =
+    controlledThreatCategories.includes(category);
+
+  const isMalicious = maliciousCategories.includes(category);
+
   return (
     <center style={{ marginTop: "100px" }}>
       <Card className="max-w-xl">
@@ -28,7 +52,7 @@ export default function Warning() {
                 </span>
               </p>
               <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
-                Spear Phishing
+                {category?.toUpperCase()}
               </p>
             </div>
           </div>
@@ -42,15 +66,15 @@ export default function Warning() {
                 </span>
               </p>
               <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
-                <Badge color="failure" size="xl" className="m-1">
-                  Ultra
-                </Badge>
-                <Badge color="warning" size="xl" className="m-1">
-                  High
-                </Badge>
-                <Badge color="dark" size="xl" className="m-1">
-                  Medium
-                </Badge>
+                {category === "shopping" ? (
+                  <Badge color="dark" size="xl" className="m-1">
+                    Low
+                  </Badge>
+                ) : (
+                  <Badge color="warning" size="xl" className="m-1">
+                    High
+                  </Badge>
+                )}
               </p>
             </div>
           </div>
@@ -64,9 +88,16 @@ export default function Warning() {
                 </span>
               </p>
               <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
-                <Badge color="failure" size="xl" className="m-1">
-                  100%
-                </Badge>
+                {inControlledThreatCategories && (
+                  <Badge color="failure" size="xl" className="m-1">
+                    100%
+                  </Badge>
+                )}
+                {isMalicious && (
+                  <Badge color="dark" size="xl" className="m-1">
+                    Subjective
+                  </Badge>
+                )}
               </p>
             </div>
           </div>
