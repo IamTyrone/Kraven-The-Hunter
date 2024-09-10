@@ -1,24 +1,84 @@
-from fastapi import FastAPI
 from pydantic import BaseModel
 import joblib
 import pandas as pd
 from features.features import Cleaner
 from utils.predictor import predict
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker, Session
+import sqlalchemy
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from urllib.parse import urlparse
+
+
+
 
 app = FastAPI()
 
+origins = ["http://localhost:5174"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Database setup
+DATABASE_URL = "sqlite:///./test.db"
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = sqlalchemy.orm.declarative_base()
+
+
+# Database model
+class Report(Base):
+    __tablename__ = "reports"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, index=True) # User's  Email
+    url = Column(String) # The reported URL
+    threat_category = Column(String) # The reported URL
+
+# Create tables
+Base.metadata.create_all(bind=engine)
+
+# Dependency to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+
+# Pydantic model for request data
+class ReportCreate(BaseModel):
+    email: str
+    url: str
+    threat_category: str
+
+# Pydantic model for response data
+class ReportResponse(BaseModel):
+    id: int
+    email: str
+    url: str
+    threat_category: str
 
 class URL(BaseModel):
     url: str
 
 model = joblib.load("models/DecisionTree.pkl")
 
-def validate_url(url: str) -> bool:
-    return True
+def valid_url(url: str) -> bool:
+    parsed_url = urlparse(url)
+    return all([parsed_url.scheme, parsed_url.netloc])
 
 @app.post("/prediction")
 async def root(url: URL):
-    url_is_valid = validate_url(url.url)
+    url_is_valid = valid_url(url.url)
 
     if url_is_valid is False: return {"error": "Invalid URL."}
 
@@ -35,10 +95,22 @@ async def root(url: URL):
 
     prediction = predict(model, new_data)
 
-    print(f"Predicted class: {prediction}")
-
     data = {"status": False, "message":"Benign"}
     if prediction == 0:
         return data
     
     return {"status": True, "message":"Malicious"}
+
+# API endpoint to create a report
+@app.post("/reports", response_model=ReportResponse)
+async def create_report(report: ReportCreate, db: Session = Depends(get_db)):
+    db_report = Report(**report.model_dump())
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
+    return db_report
+
+# API endpoint to get all reports
+@app.get("/reports")
+async def get_reports(db: Session = Depends(get_db)):
+    return db.query(Report).all()
