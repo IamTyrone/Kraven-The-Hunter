@@ -9,19 +9,42 @@ import {
 import { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function ReportingForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [payload, setPayload] = useState();
   const navigate = useNavigate();
+
   const onChange = (e) => {
     setPayload({ ...payload, [e.target.name]: e.target.value });
   };
 
   const onSubmit = () => {
     setIsLoading(true);
-    console.log(payload);
+    axios
+      .post("http://localhost:8000/reports", payload)
+      .then((res) => {
+        toast.success(
+          "Your report has been  submitted. Thank you for making the web a better place!"
+        );
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        console.log(res);
+      })
+      .catch((err) => {
+        toast.error("An error occurred. Please try again.");
+        console.log(err);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      });
   };
+
   return (
     <center style={{ marginTop: "100px" }}>
       <Card className="max-w-xl">
