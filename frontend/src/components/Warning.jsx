@@ -39,9 +39,9 @@ export default function Warning() {
           <br />
         </span>
         <span className="text-center text-sm mb-4">
-          The website that you intend on visiting has been flagged as malicious.
+          The website that you intend on visiting might be flagged as malicious.
           The following below are our classifications for its threat level and
-          why it was flagged.
+          why it may have been flagged.
         </span>
         <Banner>
           <div className="flex w-[calc(100%-2rem)] flex-col justify-between rounded-lg border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700 md:flex-row lg:max-w-7xl">
