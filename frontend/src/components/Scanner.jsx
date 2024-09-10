@@ -1,7 +1,7 @@
 import { Card, Avatar, Button, TextInput, Spinner } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -9,20 +9,31 @@ export default function Scanner() {
   const [payload, setPayload] = useState();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const url = searchParams.get("url");
 
   const onChange = (e) => {
     setPayload({ ...payload, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (url) {
+      setPayload({ url });
+    }
+  }, [url]);
 
   const onScan = () => {
     setLoading(true);
     axios
       .post("http://localhost:8000/prediction", payload)
       .then((res) => {
-        if (res.data.category === "") {
+        if (res.data.category === "invalid") {
           toast.error("Invalid URL. Please put a valid URL");
         } else {
-          navigate(`/warning?category=${res.data.category}`);
+          setTimeout(() => {
+            navigate(`/warning?category=${res.data.category}`);
+          }, 1000);
         }
       })
       .catch((err) => {
@@ -49,14 +60,26 @@ export default function Scanner() {
         </span>
         <form className="flex flex-col gap-4">
           <div>
-            <TextInput
-              id="url"
-              placeholder="URL"
-              required
-              type="text"
-              onChange={onChange}
-              name="url"
-            />
+            {url ? (
+              <TextInput
+                id="url"
+                placeholder="URL"
+                required
+                disabled
+                type="text"
+                name="url"
+                value={url}
+              />
+            ) : (
+              <TextInput
+                id="url"
+                placeholder="URL"
+                required
+                type="text"
+                onChange={onChange}
+                name="url"
+              />
+            )}
           </div>
         </form>
         <Button color="warning" onClick={onScan}>

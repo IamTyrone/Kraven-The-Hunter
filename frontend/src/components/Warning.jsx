@@ -8,13 +8,7 @@ export default function Warning() {
 
   const category = searchParams.get("category");
 
-  const maliciousCategories = [
-    "adult",
-    "malware",
-    "phishing",
-    "Malicious",
-    "Benign",
-  ];
+  const maliciousCategories = ["adult", "malware", "phishing", "Malicious"];
 
   const controlledThreatCategories = [
     "Phishing",
@@ -70,6 +64,11 @@ export default function Warning() {
                   <Badge color="dark" size="xl" className="m-1">
                     Low
                   </Badge>
+                ) : null}
+                {category === "Benign" ? (
+                  <Badge color="success" size="xl" className="m-1">
+                    Safe
+                  </Badge>
                 ) : (
                   <Badge color="warning" size="xl" className="m-1">
                     High
@@ -93,11 +92,12 @@ export default function Warning() {
                     100%
                   </Badge>
                 )}
-                {isMalicious && (
-                  <Badge color="dark" size="xl" className="m-1">
-                    Subjective
-                  </Badge>
-                )}
+                {isMalicious ||
+                  (category === "Benign" && (
+                    <Badge color="dark" size="xl" className="m-1">
+                      Subjective
+                    </Badge>
+                  ))}
               </p>
             </div>
           </div>
