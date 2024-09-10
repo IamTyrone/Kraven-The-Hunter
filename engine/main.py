@@ -76,11 +76,27 @@ def valid_url(url: str) -> bool:
     parsed_url = urlparse(url)
     return all([parsed_url.scheme, parsed_url.netloc])
 
+def is_shopping_website(url: str) -> bool:
+    try:
+        with open('myshopping.txt', 'r') as file:
+            websites = file.read().splitlines()
+            return url in websites
+    except FileNotFoundError:
+        print("The file 'myshopping.txt' was not found.")
+        return False
+    
+
 @app.post("/prediction")
-async def root(url: URL):
+async def root(url: URL, db: Session = Depends(get_db)):
     url_is_valid = valid_url(url.url)
 
-    if url_is_valid is False: return {"error": "Invalid URL."}
+    if url_is_valid is False: return {"error": "Invalid URL.", "category":"invalid"}
+    if is_shopping_website(url.url): return {"error": "Shopping websites are not allowed.", "category":"shopping"}
+
+    url_reported = db.query(Report).filter(Report.url == url.url).first()
+
+    if url_reported is not None:
+        return {"status": True, "category": url_reported.threat_category}
 
     cleaner = Cleaner("")
     
@@ -95,11 +111,11 @@ async def root(url: URL):
 
     prediction = predict(model, new_data)
 
-    data = {"status": False, "message":"Benign"}
+    data = {"status": False, "category":"Benign"}
     if prediction == 0:
         return data
     
-    return {"status": True, "message":"Malicious"}
+    return {"status": True, "category":"Malicious"}
 
 # API endpoint to create a report
 @app.post("/reports", response_model=ReportResponse)
