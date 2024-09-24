@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 
 app = FastAPI()
 
-origins = ["http://localhost:5174"]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -91,7 +91,7 @@ async def root(url: URL, db: Session = Depends(get_db)):
     url_is_valid = valid_url(url.url)
 
     if url_is_valid is False: return {"error": "Invalid URL.", "category":"invalid"}
-    if is_shopping_website(url.url): return {"error": "Shopping websites are not allowed.", "category":"shopping"}
+    if is_shopping_website(url.url): return {"error": "Shopping websites are not allowed.", "category":"shopping", "status": True}
 
     url_reported = db.query(Report).filter(Report.url == url.url).first()
 
