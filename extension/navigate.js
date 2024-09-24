@@ -17,11 +17,12 @@ const navigator = () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      if (res.data.url_status) {
+      if (data.status) {
         // is malicious
-        window.close();
-
-        window.open(`https://localhost:5174/warning?category=${data.category}`);
+        if (currentUrl.includes("localhost")) {
+          return;
+        }
+        window.open(`http://localhost:5173/warning?category=${data.category}`);
       }
     })
     .catch((err) => {});
@@ -31,7 +32,7 @@ navigator();
 
 try {
   document.getElementById("myBtn").addEventListener("click", () => {
-    window.open(`https://localhost:5174/scan?url=${currentUrl}`);
+    window.open(`http://localhost:5173/scan?url=${currentUrl}`);
   });
 } catch (err) {
   console.log(err);
