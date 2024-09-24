@@ -64,8 +64,7 @@ export default function Warning() {
                   <Badge color="dark" size="xl" className="m-1">
                     Low
                   </Badge>
-                ) : null}
-                {category === "Benign" ? (
+                ) : category === "Benign" ? (
                   <Badge color="success" size="xl" className="m-1">
                     Safe
                   </Badge>
