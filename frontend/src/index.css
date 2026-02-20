@@ -1,3 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark-950 text-gray-100 font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-950;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-600;
+  }
+
+  ::selection {
+    @apply bg-kraven-500/30 text-kraven-200;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-dark-900/60 backdrop-blur-xl border border-dark-700/50 rounded-2xl;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300 hover:border-kraven-500/30 hover:shadow-lg hover:shadow-kraven-500/5;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-kraven-500 text-white font-semibold rounded-xl
+           transition-all duration-300 hover:bg-kraven-600 hover:shadow-lg hover:shadow-kraven-500/25
+           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-dark-800 text-gray-200 font-semibold rounded-xl
+           border border-dark-600/50 transition-all duration-300 hover:bg-dark-700 hover:border-dark-500
+           active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-500/10 text-red-400 font-semibold rounded-xl
+           border border-red-500/20 transition-all duration-300 hover:bg-red-500/20 hover:border-red-500/40
+           active:scale-[0.98];
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-dark-900/80 border border-dark-700/50 rounded-xl text-gray-100
+           placeholder-dark-400 font-mono text-sm transition-all duration-300
+           focus:outline-none focus:border-kraven-500/50 focus:ring-2 focus:ring-kraven-500/20;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .badge-safe {
+    @apply badge bg-kraven-500/10 text-kraven-400 border border-kraven-500/20;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-500/10 text-red-400 border border-red-500/20;
+  }
+
+  .badge-warning {
+    @apply badge bg-amber-500/10 text-amber-400 border border-amber-500/20;
+  }
+
+  .badge-info {
+    @apply badge bg-blue-500/10 text-blue-400 border border-blue-500/20;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(26, 171, 100, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26, 171, 100, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+}

@@ -1,12 +1,23 @@
-import { Card, Avatar, Button, TextInput, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiOutlineArrowRight } from "react-icons/hi";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  ScanSearch,
+  Loader2,
+  Shield,
+  ArrowRight,
+  AlertTriangle,
+} from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
 export default function Scanner() {
-  const [payload, setPayload] = useState();
+  const [payload, setPayload] = useState({ url: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -23,76 +34,148 @@ export default function Scanner() {
     }
   }, [url]);
 
-  const onScan = () => {
+  const onScan = (e) => {
+    e.preventDefault();
+    if (!payload.url) {
+      toast.error("Please enter a URL to scan.");
+      return;
+    }
     setLoading(true);
     axios
       .post("http://localhost:8000/prediction", payload)
       .then((res) => {
         if (res.data.category === "invalid") {
-          toast.error("Invalid URL. Please put a valid URL");
+          toast.error(
+            "Invalid URL. Please enter a valid URL with http:// or https://",
+          );
         } else {
-          setTimeout(() => {
-            navigate(`/warning?category=${res.data.category}`);
-          }, 1000);
+          navigate(
+            `/warning?category=${res.data.category}&url=${encodeURIComponent(payload.url)}`,
+          );
         }
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("An error occurred. Please try again.");
-        console.log(err);
       })
       .finally(() => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setTimeout(() => setLoading(false), 500);
       });
   };
+
   return (
-    <center style={{ marginTop: "100px" }}>
-      <Card className="max-w-xl">
-        <Avatar img="/Lion2.jpg" rounded size="xl" />
-        <h1 className="text-center text-xl mb-4 mt-3">KRAVEN THE HUNTER</h1>
-        <span className="text-center text-sm text-xl">
-          <b>Scanner</b>
-          <br />
-        </span>
-        <span className="text-center text-sm mb-4">
-          Scan any URL by pasting it into the field below.
-        </span>
-        <form className="flex flex-col gap-4">
-          <div>
-            {url ? (
-              <TextInput
-                id="url"
-                placeholder="URL"
-                required
-                disabled
-                type="text"
-                name="url"
-                value={url}
-              />
-            ) : (
-              <TextInput
-                id="url"
-                placeholder="URL"
-                required
-                type="text"
-                onChange={onChange}
-                name="url"
-              />
-            )}
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        className="w-full max-w-xl"
+      >
+        <div className="glass-card p-8 sm:p-10">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-kraven-500/10 border border-kraven-500/20 mb-5">
+              <ScanSearch className="w-8 h-8 text-kraven-400" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+              URL Scanner
+            </h1>
+            <p className="text-dark-400 text-sm max-w-sm mx-auto">
+              Paste any URL below to analyze it for phishing, malware, and other
+              threats using our ML engine.
+            </p>
           </div>
-        </form>
-        <Button color="warning" onClick={onScan}>
-          {loading ? (
-            <Spinner color="failure" aria-label="Warning spinner example" />
-          ) : (
-            <>
-              Scan A Url
-              <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-            </>
+
+          <form onSubmit={onScan} className="space-y-5">
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500">
+                <Shield className="w-4 h-4" />
+              </div>
+              {url ? (
+                <input
+                  type="text"
+                  name="url"
+                  value={url}
+                  disabled
+                  className="input-field pl-11 opacity-70 cursor-not-allowed"
+                />
+              ) : (
+                <input
+                  type="text"
+                  name="url"
+                  placeholder="https://example.com"
+                  value={payload.url}
+                  onChange={onChange}
+                  className="input-field pl-11"
+                  autoFocus
+                />
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-4 text-base"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <ScanSearch className="w-5 h-5" />
+                  Scan URL
+                </>
+              )}
+            </button>
+          </form>
+
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-6"
+            >
+              <div className="glass-card p-4 border-kraven-500/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-kraven-500 animate-pulse" />
+                  <span className="text-sm text-dark-300 font-mono">
+                    Running ML classification model...
+                  </span>
+                </div>
+                <div className="mt-3 h-1 bg-dark-800 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                    className="h-full bg-gradient-to-r from-kraven-500 to-kraven-400 rounded-full"
+                  />
+                </div>
+              </div>
+            </motion.div>
           )}
-        </Button>
-      </Card>
-    </center>
+
+          <div className="mt-8 pt-6 border-t border-dark-800/50">
+            <div className="flex items-start gap-3 text-xs text-dark-500">
+              <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <p>
+                Kraven analyzes URL structure, character patterns, and known
+                threat databases. Results are probabilistic — always exercise
+                caution with unfamiliar links.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 text-center">
+          <button
+            onClick={() => navigate("/report")}
+            className="inline-flex items-center gap-2 text-sm text-dark-400 hover:text-kraven-400 transition-colors"
+          >
+            Know a malicious site? Report it
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </motion.div>
+    </div>
   );
 }
