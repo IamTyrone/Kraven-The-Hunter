@@ -1,44 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <script src="./index.js"></script>
-    <title class="">Kraven The Hunter</title>
+    <title>Kraven — AI Threat Detection</title>
   </head>
   <body>
-    <div style="padding: 10px">
-      <div class="row">
-        <div style="font-weight: bold; color: rgb(146, 123, 123)">
-          Kraven The Hunter
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h1 id="message">Join The Hunt!</h1>
-        </div>
-        <div>
-          <p>
-            <b
-              >Do you, by any chance think this site might be malicious in any
-              way or form? Click the button below and fill the form that
-              appears. This will help other users to avoid being victimized by
-              the same site.
-            </b>
-          </p>
-          <button
-            id="myBtn"
-            type="button"
-            style="padding: 10px; margin-top: 20px; margin-left: 10px"
+    <div class="popup-container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            Report Site
-          </button>
+            <path
+              d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+            />
+          </svg>
+          <div class="pulse-dot"></div>
+        </div>
+        <div class="header-text">
+          <h1>KRAVEN</h1>
+          <div class="version">v1.0 — AI Threat Detection</div>
         </div>
       </div>
-      <br />
+
+      <!-- Status Card -->
+      <div class="status-card">
+        <div class="status-header">
+          <div class="status-indicator" id="statusDot"></div>
+          <span class="status-label" id="statusLabel">Active Protection</span>
+        </div>
+        <p class="status-message" id="statusMessage">
+          Kraven is <strong>monitoring</strong> your browsing session. URLs are
+          automatically scanned for phishing, malware, and other threats.
+        </p>
+      </div>
+
+      <!-- Current URL -->
+      <div class="url-display" id="urlDisplay">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+          <path d="M2 12h20" />
+        </svg>
+        <span class="url-text" id="currentUrl">Loading...</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="btn-group">
+        <button class="btn btn-primary" id="scanBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+            <path d="M11 8v6" />
+            <path d="M8 11h6" />
+          </svg>
+          Scan Current Page
+        </button>
+        <button class="btn btn-danger" id="reportBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"
+            />
+            <line x1="4" x2="4" y1="22" y2="15" />
+          </svg>
+          Report This Site
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+          />
+        </svg>
+        <span>ML-powered threat intelligence</span>
+      </div>
     </div>
+    <script src="./index.js"></script>
   </body>
-  <script src="./navigate.js"></script>
 </html>

@@ -5,11 +5,15 @@ try {
   currentUrl = `${firstPart}//${secondPart}`;
 } catch (e) {}
 
-const navigator = () => {
+const kravenNavigator = () => {
+  if (currentUrl.includes("localhost") || currentUrl.includes("chrome://")) {
+    return;
+  }
+
   fetch("http://localhost:8000/prediction", {
-    method: "POST", // Specify the method as POST
+    method: "POST",
     headers: {
-      "Content-Type": "application/json", // Set the content type to JSON
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       url: currentUrl,
@@ -18,22 +22,12 @@ const navigator = () => {
     .then((res) => res.json())
     .then((data) => {
       if (data.status) {
-        // is malicious
-        if (currentUrl.includes("localhost")) {
-          return;
-        }
-        window.open(`http://localhost:5173/warning?category=${data.category}`);
+        window.open(
+          `http://localhost:5173/warning?category=${data.category}&url=${encodeURIComponent(currentUrl)}`,
+        );
       }
     })
-    .catch((err) => {});
+    .catch(() => {});
 };
 
-navigator();
-
-try {
-  document.getElementById("myBtn").addEventListener("click", () => {
-    window.open(`http://localhost:5173/scan?url=${currentUrl}`);
-  });
-} catch (err) {
-  console.log(err);
-}
+kravenNavigator();
