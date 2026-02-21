@@ -1,0 +1,46 @@
+services:
+  engine:
+    build:
+      context: ./engine
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - model-data:/app/models
+      - ./engine/features/data:/app/features/data:ro
+      - ./engine/myshopping.txt:/app/myshopping.txt:ro
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./engine
+      dockerfile: Dockerfile
+    command: celery -A celery_worker worker --loglevel=info --concurrency=1
+    env_file:
+      - .env
+    volumes:
+      - model-data:/app/models
+      - ./engine/features/data:/app/features/data:ro
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  model-data:
