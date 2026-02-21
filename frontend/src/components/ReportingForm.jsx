@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { API_URL } from "../config";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -47,7 +48,7 @@ export default function ReportingForm() {
     }
     setIsLoading(true);
     axios
-      .post("http://localhost:8000/reports", payload)
+      .post(`${API_URL}/reports`, payload)
       .then(() => {
         toast.success("Report submitted. Thank you for making the web safer!");
         setTimeout(() => {

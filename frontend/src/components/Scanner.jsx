@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { API_URL } from "../config";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -42,15 +43,16 @@ export default function Scanner() {
     }
     setLoading(true);
     axios
-      .post("http://localhost:8000/prediction", payload)
+      .post(`${API_URL}/prediction`, payload)
       .then((res) => {
         if (res.data.category === "invalid") {
           toast.error(
             "Invalid URL. Please enter a valid URL with http:// or https://",
           );
         } else {
+          const { category, confidence, source } = res.data;
           navigate(
-            `/warning?category=${res.data.category}&url=${encodeURIComponent(payload.url)}`,
+            `/warning?category=${category}&url=${encodeURIComponent(payload.url)}&confidence=${confidence}&source=${source}`,
           );
         }
       })

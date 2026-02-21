@@ -20,20 +20,10 @@ const fadeUp = {
 };
 
 function getSeverityConfig(category) {
-  const controlledCategories = [
-    "Phishing",
-    "Typo Squating",
-    "Adult",
-    "shopping",
-  ];
-  const isControlled = controlledCategories.includes(category);
-
   if (category === "Benign") {
     return {
       severity: "Safe",
       severityBadge: "badge-safe",
-      confidence: "ML Model",
-      confidenceBadge: "badge-info",
       icon: ShieldCheck,
       iconColor: "text-kraven-400",
       iconBg: "bg-kraven-500/10 border-kraven-500/20",
@@ -45,12 +35,10 @@ function getSeverityConfig(category) {
     };
   }
 
-  if (category === "shopping") {
+  if (category === "Shopping") {
     return {
       severity: "Low",
       severityBadge: "badge-warning",
-      confidence: isControlled ? "100%" : "Subjective",
-      confidenceBadge: isControlled ? "badge-danger" : "badge-info",
       icon: ShieldAlert,
       iconColor: "text-amber-400",
       iconBg: "bg-amber-500/10 border-amber-500/20",
@@ -65,8 +53,6 @@ function getSeverityConfig(category) {
   return {
     severity: "High",
     severityBadge: "badge-danger",
-    confidence: isControlled ? "100%" : "ML Model",
-    confidenceBadge: isControlled ? "badge-danger" : "badge-warning",
     icon: ShieldX,
     iconColor: "text-red-400",
     iconBg: "bg-red-500/10 border-red-500/20",
@@ -78,14 +64,34 @@ function getSeverityConfig(category) {
   };
 }
 
+function formatSource(source) {
+  const map = {
+    ml_model: "ML Model",
+    community_report: "Community Report",
+    shopping_list: "Shopping List",
+    validation: "Validation",
+  };
+  return map[source] || source;
+}
+
 export default function Warning() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const category = searchParams.get("category") || "Unknown";
   const scannedUrl = searchParams.get("url");
+  const confidence = parseFloat(searchParams.get("confidence")) || 0;
+  const source = searchParams.get("source") || "ml_model";
   const config = getSeverityConfig(category);
   const Icon = config.icon;
+
+  const confidencePercent = `${Math.round(confidence * 100)}%`;
+  const confidenceBadge =
+    confidence >= 0.85
+      ? "badge-danger"
+      : confidence >= 0.5
+        ? "badge-warning"
+        : "badge-info";
 
   const metrics = [
     {
@@ -100,8 +106,13 @@ export default function Warning() {
     },
     {
       label: "Confidence",
-      value: config.confidence,
-      badgeClass: config.confidenceBadge,
+      value: confidencePercent,
+      badgeClass: confidenceBadge,
+    },
+    {
+      label: "Source",
+      value: formatSource(source),
+      badgeClass: "badge-info",
     },
   ];
 
