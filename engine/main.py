@@ -139,6 +139,14 @@ _reports_since_retrain = 0
 @app.on_event("startup")
 def startup():
     _load_shopping_list()
+    if not os.path.exists(MODEL_PATH):
+        logger.info("No model found at %s — running initial training...", MODEL_PATH)
+        try:
+            from train import run_training
+            run_training()
+            logger.info("Initial training complete.")
+        except Exception as e:
+            logger.error("Initial training failed: %s", e)
     _load_model()
 
 

@@ -1,0 +1,48 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  DEPLOY_DIR: /home/tyrone/kraven
+
+jobs:
+  deploy:
+    name: Deploy to Demo Server
+    runs-on: ubuntu-latest
+    environment: Demo
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: SSH deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            set -e
+
+            cd ${{ env.DEPLOY_DIR }}
+
+            git pull origin main
+
+            # Use the example env file as-is
+            cp .example.env .env
+
+            # Rebuild images and restart all services
+            docker compose up -d --build
+
+            # Train model if it doesn't already exist on the volume
+            if ! docker compose exec -T engine test -f /app/models/RandomForest.pkl; then
+              echo "No model found — running initial training..."
+              docker compose exec -T engine python train.py
+            fi
+
+            echo "Deployment complete."
