@@ -21,9 +21,9 @@ const kravenNavigator = () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      if (data.status) {
+      if (data.status && data.confidence >= 0.85) {
         window.open(
-          `http://localhost:5173/warning?category=${data.category}&url=${encodeURIComponent(currentUrl)}`,
+          `http://localhost:5173/warning?category=${data.category}&url=${encodeURIComponent(currentUrl)}&confidence=${data.confidence}&source=${data.source}`,
         );
       }
     })
