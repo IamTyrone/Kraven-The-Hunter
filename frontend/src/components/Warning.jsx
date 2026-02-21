@@ -215,7 +215,11 @@ export default function Warning() {
                 Scan Another URL
               </button>
               <button
-                onClick={() => navigate("/report")}
+                onClick={() =>
+                  navigate(
+                    `/report?url=${encodeURIComponent(scannedUrl || "")}&threat_category=${encodeURIComponent(category)}`,
+                  )
+                }
                 className="btn-danger"
               >
                 <Flag className="w-4 h-4" />

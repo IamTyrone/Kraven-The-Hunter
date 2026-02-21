@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Flag,
@@ -28,11 +28,12 @@ const threatCategories = [
 ];
 
 export default function ReportingForm() {
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [payload, setPayload] = useState({
     email: "",
-    url: "",
-    threat_category: "",
+    url: searchParams.get("url") || "",
+    threat_category: searchParams.get("threat_category") || "",
   });
   const navigate = useNavigate();
 
